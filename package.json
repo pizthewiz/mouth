@@ -5,12 +5,12 @@
 	"main": "./mouth.js",
 	"repository": {
 		"type": "git",
-		"url": "http://github.com/pizthewiz/mouth",
+		"url": "http://github.com/pizthewiz/mouth"
 	},
 	"keywords": ["oauth", "authentication"],
 	"author": {
-	  "name": "Jean-Pierre Mouilleseaux",
+	  "name": "Jean-Pierre Mouilleseaux"
 	},
 	"engine": { "node": ">=0.6" },
-	"license": "MIT",
+	"license": "MIT"
 }
