@@ -1,0 +1,5 @@
+
+[ ] rework initializer to accept and hold consumer key/secret and oauth token/secret
+[ ] combine postParams and postBuffer vars and add var to control if included in the base for signing
+[ ] add basic testing, mocha?
+[ ] add twitter examples
