@@ -138,8 +138,12 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
 
   var port = parsedURL.port || (parsedURL.protocol == 'http:' ? 80 : 443);
   var path = parsedURL.pathname || '/';
-  if (parsedURL.query)
-    path += '?' + parsedURL.query;
+  if (parsedURL.query) {
+//    path += '?' + parsedURL.query;
+    console.log('ERROR - query paramaters should be defined via queryParams hash, not in the URL');
+    callback({}, null, null);
+    return;
+  }
 
   var opts = {
     host: parsedURL.hostname,
