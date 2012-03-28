@@ -90,7 +90,7 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]));
   }
   var flatQuery = encodeURI(queryParts.join('&'));
-  console.log('flatQuery:' + flatQuery);
+//  console.log('flatQuery:' + flatQuery);
 
   var bodyParts = [];
   sortedKeys = this._sortedKeys(postParams);
@@ -103,12 +103,12 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
   var flatBody = bodyParts.join('&');
 
   var base = encodeURIComponent(method) + '&' + encodeURIComponent(url) + '&' + encodeURIComponent(parts.join('&'));
-  console.log('base:' + util.inspect(base));
+//  console.log('base:' + util.inspect(base));
   key = consumerSecret + '&' + userSecret;
-  console.log('key:' + key);
+//  console.log('key:' + key);
 
   var sig = crypto.createHmac('sha1', key).update(base).digest('base64');
-  console.log('sig:' + sig);
+//  console.log('sig:' + sig);
 
   var authHeader = 'OAuth oauth_signature="' + encodeURIComponent(sig) + '"';
   sortedKeys = this._sortedKeys(oauthParams);
@@ -121,7 +121,7 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
   if (flatQuery.length > 0) {
     url += '?' + flatQuery;
   }
-  console.log('url:' + url);
+//  console.log('url:' + url);
   var parsedURL = URL.parse(url, false);
 
   var headers = {
@@ -133,7 +133,7 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
     'Connection': 'close',
     'User-Agent': 'Node authentication'
   };
-  console.log('headers:' + util.inspect(headers));
+//  console.log('headers:' + util.inspect(headers));
 
   var port = parsedURL.port || (parsedURL.protocol === 'http:' ? 80 : 443);
   var path = parsedURL.pathname || '/';
@@ -172,11 +172,11 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
       data += d;
     });
     res.on('end', function () {
-      console.log('END');
+//      console.log('END');
       internalCallback(data, res);
     });
     res.on('close', function () {
-      console.log('CLOSE');
+//      console.log('CLOSE');
       internalCallback(data, res);
     });
   });
