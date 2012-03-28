@@ -37,19 +37,18 @@ Mouth.prototype._getNonce= function(size) {
        result[i]=  chars[char_pos];
    }
    return result.join('');
-}
+};
 Mouth.prototype._getTimestamp= function() {
   return Math.floor( (new Date()).getTime() / 1000 );
-}
+};
 
-Mouth.prototype._sortedKeys= function(hash) {
+Mouth.prototype._sortedKeys = function (hash) {
   var keys = [];
   for (var key in hash) {
-    keys.push(key)
-  };
+    keys.push(key);
+  }
   return keys.sort();
-}
-
+};
 
 Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffer, contentType, consumerKey, consumerSecret, userToken, userSecret, callbackURL, verifier, callback) {
   queryParams = queryParams || {};
@@ -63,30 +62,30 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
     'oauth_version': '1.0',
     'oauth_timestamp': this._getTimestamp(),
     'oauth_consumer_key': consumerKey,
-    'oauth_signature_method': 'HMAC-SHA1',
+    'oauth_signature_method': 'HMAC-SHA1'
   };
   // optional params
   if (userToken && userToken.length > 0) {
-    oauthParams['oauth_token'] = userToken;
+    oauthParams.oauth_token = userToken;
   }
   if (callbackURL && callbackURL.length > 0) {
-    oauthParams['oauth_callback'] = callbackURL;
+    oauthParams.oauth_callback = callbackURL;
   }
   if (verifier && verifier.length > 0) {
-    oauthParams['oauth_verifier'] = verifier;
+    oauthParams.oauth_verifier = verifier;
   }
 
-  var parts = [];
+  var parts = [], idx = null, key = null;
   var sortedKeys = this._sortedKeys(oauthParams);
-  for (var idx = 0; idx < sortedKeys.length; idx++) {
-    var key = sortedKeys[idx];
+  for (idx = 0; idx < sortedKeys.length; idx++) {
+    key = sortedKeys[idx];
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(oauthParams[key]));
   }
 
   var queryParts = [];
   sortedKeys = this._sortedKeys(queryParams);
-  for (var idx = 0; idx < sortedKeys.length; idx++) {
-    var key = sortedKeys[idx];
+  for (idx = 0; idx < sortedKeys.length; idx++) {
+    key = sortedKeys[idx];
     queryParts.push(key + '=' + queryParams[key]);
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]));
   }
@@ -95,8 +94,8 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
 
   var bodyParts = [];
   sortedKeys = this._sortedKeys(postParams);
-  for (var idx = 0; idx < sortedKeys.length; idx++) {
-    var key = sortedKeys[idx];
+  for (idx = 0; idx < sortedKeys.length; idx++) {
+    key = sortedKeys[idx];
     bodyParts.push(key + '=' + postParams[key]);
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(postParams[key]));
   }
@@ -105,16 +104,16 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
 
   var base = encodeURIComponent(method) + '&' + encodeURIComponent(url) + '&' + encodeURIComponent(parts.join('&'));
   console.log('base:' + util.inspect(base));
-  var key = consumerSecret + '&' + userSecret;
+  key = consumerSecret + '&' + userSecret;
   console.log('key:' + key);
 
   var sig = crypto.createHmac('sha1', key).update(base).digest('base64');
   console.log('sig:' + sig);
 
   var authHeader = 'OAuth oauth_signature="' + encodeURIComponent(sig) + '"';
-  var sortedKeys = this._sortedKeys(oauthParams);
-  for (var idx = 0; idx < sortedKeys.length; idx++) {
-    var key = sortedKeys[idx];
+  sortedKeys = this._sortedKeys(oauthParams);
+  for (idx = 0; idx < sortedKeys.length; idx++) {
+    key = sortedKeys[idx];
     authHeader += ', ' + key + '="' + encodeURIComponent(oauthParams[key]) + '"';
   }
 
@@ -132,17 +131,14 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
     'Host': parsedURL.host,
     'Accept': '*/*',
     'Connection': 'close',
-    'User-Agent': 'Node authentication',
+    'User-Agent': 'Node authentication'
   };
   console.log('headers:' + util.inspect(headers));
 
-  var port = parsedURL.port || (parsedURL.protocol == 'http:' ? 80 : 443);
+  var port = parsedURL.port || (parsedURL.protocol === 'http:' ? 80 : 443);
   var path = parsedURL.pathname || '/';
   if (parsedURL.query) {
-//    path += '?' + parsedURL.query;
-    console.log('ERROR - query paramaters should be defined via queryParams hash, not in the URL');
-    callback({}, null, null);
-    return;
+    path += '?' + parsedURL.query;
   }
 
   var opts = {
@@ -150,14 +146,15 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
     port: port,
     path: path,
     method: method,
-    headers: headers,
+    headers: headers
   };
 //  console.log(opts);
 
   var callbackCalled = false;
   var internalCallback = function (data, res) {
-    if (callbackCalled)
+    if (callbackCalled) {
       return;
+    }
     callbackCalled = true;
 
     if (res.statusCode >= 200 && res.statusCode <= 299) {
@@ -166,33 +163,34 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
       // TODO - handle redirects
       callback({statusCode: res.statusCode, data: data}, data, res);
     }
-  }
+  };
 
   var selectedModule = (parsedURL.protocol === 'https:' ? https : http);
   var req = selectedModule.request(opts, function (res) {
     var data = '';
-    res.on('data', function(d) {
+    res.on('data', function (d) {
       data += d;
     });
-    res.on('end', function() {
+    res.on('end', function () {
       console.log('END');
       internalCallback(data, res);
     });
-    res.on('close', function() {
+    res.on('close', function () {
       console.log('CLOSE');
       internalCallback(data, res);
     });
   });
-  req.on('error', function(e) {
+  req.on('error', function (e) {
       callbackCalled = true;
       callback(e, data, res);
   });
 
   if (contentLength > 0) {
-    if (postBuffer)
+    if (postBuffer) {
       req.write(postBuffer);
-    else
+    } else {
       req.write(flatBody);
+    }
   }
 
 //  console.log('req:\n' + util.inspect(req));
