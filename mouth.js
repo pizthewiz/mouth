@@ -18,6 +18,8 @@ module.exports = Mouth;
 function Mouth() {
 }
 
+module.exports.version = '0.1.0-pre';
+
 // yoinked from node-oauth
 Mouth.prototype.NONCE_CHARS= [
   'a','b','c','d','e','f','g','h','i','j','k','l','m','n',
