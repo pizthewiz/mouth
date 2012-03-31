@@ -2,7 +2,7 @@
 	"name": "mouth",
 	"description": "powerful OAuth 1.0 library",
 	"keywords": ["oauth", "authentication"],
-	"version": "0.0.1",
+	"version": "0.0.2-pre",
 	"author": "Jean-Pierre Mouilleseaux <jpm@chordedconstructions.com>",
   "repository":{
     "type": "git",
