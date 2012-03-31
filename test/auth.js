@@ -6,13 +6,21 @@ var Mouth = require('../mouth'),
   util = require('util');
 
 describe('Mouth', function () {
-  var m = null;
-  beforeEach(function () {
-    m = new Mouth();
+  describe('test config', function () {
+    should.exist(config.twitter.consumerKey);
+    should.exist(config.twitter.consumerSecret);
+    should.exist(config.twitter.slave.accessToken);
+    should.exist(config.twitter.slave.accessTokenSecret);
+    should.exist(config.twitter.indenturedServant.username);
+    should.exist(config.twitter.indenturedServant.password);
   });
 
-
   describe('Twitter', function () {
+    var m = null;
+    beforeEach(function () {
+      m = new Mouth();
+    });
+
     it('should verify slave credentials', function (done) {
       m.shit('GET', 'https://api.twitter.com/account/verify_credentials.json', {}, {}, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, config.twitter.slave.accessToken, config.twitter.slave.accessTokenSecret, null, null, function (err, data, res) {
         should.not.exist(err);
