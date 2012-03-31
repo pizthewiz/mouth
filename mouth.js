@@ -167,24 +167,22 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
     }
   };
 
+  var data = '';
   var selectedModule = (parsedURL.protocol === 'https:' ? https : http);
   var req = selectedModule.request(opts, function (res) {
-    var data = '';
     res.on('data', function (d) {
       data += d;
     });
     res.on('end', function () {
-//      console.log('END');
       internalCallback(data, res);
     });
     res.on('close', function () {
-//      console.log('CLOSE');
       internalCallback(data, res);
     });
   });
-  req.on('error', function (e) {
-      callbackCalled = true;
-      callback(e, data, res);
+  req.on('error', function (err) {
+    callbackCalled = true;
+    callback(err, data);
   });
 
   if (contentLength > 0) {
@@ -194,8 +192,5 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
       req.write(flatBody);
     }
   }
-
-//  console.log('req:\n' + util.inspect(req));
-
   req.end();
 };
