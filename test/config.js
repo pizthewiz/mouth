@@ -1,18 +1,18 @@
 
 var settings = {
-	twitter: {
-		consumerKey: '',
-		consumerSecret: '',
-		slave: {
-      accessToken: '',
-			accessTokenSecret: ''
-		},
-		// used for xAuth
-		indenturedServant: {
-		  username: '',
-		  password: ''
-		}
-	}
+  twitter: {
+    consumerKey: null,
+    consumerSecret: null,
+    slave: {
+      accessToken: null,
+      accessTokenSecret: null
+    },
+    // used for xAuth
+    indenturedServant: {
+      username: null,
+      password: null
+    }
+  }
 };
 
 module.exports = settings;
