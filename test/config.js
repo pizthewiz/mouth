@@ -6,6 +6,11 @@ var settings = {
 		slave: {
       accessToken: '',
 			accessTokenSecret: ''
+		},
+		// used for xAuth
+		indenturedServant: {
+		  username: '',
+		  password: ''
 		}
 	}
 };
