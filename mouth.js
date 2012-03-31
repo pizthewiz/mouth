@@ -18,7 +18,7 @@ module.exports = Mouth;
 function Mouth() {
 }
 
-module.exports.version = '0.1.0-pre';
+module.exports.version = '0.0.1';
 
 // yoinked from node-oauth
 Mouth.prototype.NONCE_CHARS= [
