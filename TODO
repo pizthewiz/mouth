@@ -1,5 +1,5 @@
 
-[ ] add basic testing via mocha
+[X] add basic testing via mocha
 [ ] rework Mouth object to hold instance state, consumer key/secret and oauth token/secret where appropriate
 [ ] combine postParams and postBuffer vars and add var to control if included in the base for signing
-[ ] add twitter examples
+[~] add twitter examples
