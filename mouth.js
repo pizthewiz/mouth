@@ -77,55 +77,41 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
     oauthParams.oauth_verifier = verifier;
   }
 
-  var parts = [], idx = null, key = null;
-  var sortedKeys = this._sortedKeys(oauthParams);
-  for (idx = 0; idx < sortedKeys.length; idx++) {
-    key = sortedKeys[idx];
+  var parts = [];
+  this._sortedKeys(oauthParams).forEach(function (key) {
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(oauthParams[key]));
-  }
+  });
 
   var queryParts = [];
-  sortedKeys = this._sortedKeys(queryParams);
-  for (idx = 0; idx < sortedKeys.length; idx++) {
-    key = sortedKeys[idx];
+  this._sortedKeys(queryParams).forEach(function (key) {
     queryParts.push(key + '=' + queryParams[key]);
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]));
-  }
+  });
   var flatQuery = encodeURI(queryParts.join('&'));
-//  console.log('flatQuery:' + flatQuery);
 
   var bodyParts = [];
-  sortedKeys = this._sortedKeys(postParams);
-  for (idx = 0; idx < sortedKeys.length; idx++) {
-    key = sortedKeys[idx];
+  this._sortedKeys(postParams).forEach(function (key) {
     bodyParts.push(key + '=' + postParams[key]);
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(postParams[key]));
-  }
+  });
   parts.sort();
   var flatBody = bodyParts.join('&');
 
   var base = encodeURIComponent(method) + '&' + encodeURIComponent(url) + '&' + encodeURIComponent(parts.join('&'));
-//  console.log('base:' + util.inspect(base));
-  key = consumerSecret + '&' + userSecret;
-//  console.log('key:' + key);
-
+  var key = consumerSecret + '&' + userSecret;
   var sig = crypto.createHmac('sha1', key).update(base).digest('base64');
-//  console.log('sig:' + sig);
 
   var authHeader = 'OAuth oauth_signature="' + encodeURIComponent(sig) + '"';
-  sortedKeys = this._sortedKeys(oauthParams);
-  for (idx = 0; idx < sortedKeys.length; idx++) {
-    key = sortedKeys[idx];
+  this._sortedKeys(oauthParams).forEach(function (key) {
     authHeader += ', ' + key + '="' + encodeURIComponent(oauthParams[key]) + '"';
-  }
+  });
 
   var contentLength = postBuffer ? postBuffer.length : Buffer.byteLength(flatBody);
+
   if (flatQuery.length > 0) {
     url += '?' + flatQuery;
   }
-//  console.log('url:' + url);
   var parsedURL = URL.parse(url, false);
-
   var headers = {
     'Authorization': authHeader,
     'Content-Type': contentType,
