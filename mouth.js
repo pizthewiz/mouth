@@ -44,12 +44,8 @@ Mouth.prototype._getTimestamp= function() {
   return Math.floor( (new Date()).getTime() / 1000 );
 };
 
-Mouth.prototype._sortedKeys = function (hash) {
-  var keys = [];
-  for (var key in hash) {
-    keys.push(key);
-  }
-  return keys.sort();
+Object.prototype._sortedKeys = function () {
+  return Object.keys(this).sort();
 };
 
 Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffer, contentType, consumerKey, consumerSecret, userToken, userSecret, callbackURL, verifier, callback) {
@@ -78,19 +74,19 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
   }
 
   var parts = [];
-  this._sortedKeys(oauthParams).forEach(function (key) {
+  oauthParams._sortedKeys().forEach(function (key) {
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(oauthParams[key]));
   });
 
   var queryParts = [];
-  this._sortedKeys(queryParams).forEach(function (key) {
+  queryParams._sortedKeys().forEach(function (key) {
     queryParts.push(key + '=' + queryParams[key]);
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]));
   });
   var flatQuery = encodeURI(queryParts.join('&'));
 
   var bodyParts = [];
-  this._sortedKeys(postParams).forEach(function (key) {
+  postParams._sortedKeys().forEach(function (key) {
     bodyParts.push(key + '=' + postParams[key]);
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(postParams[key]));
   });
@@ -102,7 +98,7 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
   var sig = crypto.createHmac('sha1', key).update(base).digest('base64');
 
   var authHeader = 'OAuth oauth_signature="' + encodeURIComponent(sig) + '"';
-  this._sortedKeys(oauthParams).forEach(function (key) {
+  oauthParams._sortedKeys().forEach(function (key) {
     authHeader += ', ' + key + '="' + encodeURIComponent(oauthParams[key]) + '"';
   });
 
