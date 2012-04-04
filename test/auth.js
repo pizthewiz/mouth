@@ -50,6 +50,69 @@ describe('Mouth', function () {
     should.exist(config.twitter.indenturedServant.password);
   });
 
+  describe('term.ie', function () {
+    var m = new Mouth();
+    var credentials = {
+      accessToken: null,
+      accessTokenSecret: null
+    };
+
+    it('should GET a request token', function (done) {
+      m.shit('GET', 'http://term.ie/oauth/example/request_token.php', {}, {}, null, null, 'key', 'secret', null, null, null, null, function (err, data, res) {
+        should.not.exist(err);
+        res.should.have.status(200);
+
+        should.exist(data);
+        var parsedQuery = querystring.parse(data);
+        should.exist(parsedQuery.oauth_token);
+        should.exist(parsedQuery.oauth_token_secret);
+
+        credentials.accessToken = parsedQuery.oauth_token;
+        credentials.accessTokenSecret = parsedQuery.oauth_token_secret;
+
+        done();
+      });
+    });
+
+    it('should GET an access token', function (done) {
+      m.shit('GET', 'http://term.ie/oauth/example/access_token.php', {}, {}, null, null, 'key', 'secret', credentials.accessToken, credentials.accessTokenSecret, null, null, function (err, data, res) {
+        should.not.exist(err);
+        res.should.have.status(200);
+
+        should.exist(data);
+        var parsedQuery = querystring.parse(data);
+        should.exist(parsedQuery.oauth_token);
+        should.exist(parsedQuery.oauth_token_secret);
+
+        credentials.accessToken = parsedQuery.oauth_token;
+        credentials.accessTokenSecret = parsedQuery.oauth_token_secret;
+
+        done();
+      });
+    });
+
+    it('should make authenticated call', function (done) {
+      var queryParams = {
+        foo: 'bar',
+        dog: 'yes'
+      };
+      m.shit('GET', 'http://term.ie/oauth/example/echo_api.php', queryParams, {}, null, null, 'key', 'secret', credentials.accessToken, credentials.accessTokenSecret, null, null, function (err, data, res) {
+        should.not.exist(err);
+        res.should.have.status(200);
+
+        should.exist(data);
+        var parsedQuery = querystring.parse(data);
+        should.exist(parsedQuery.foo);
+        should.equal(parsedQuery.foo, queryParams.foo);
+        should.exist(parsedQuery.dog);
+        should.equal(parsedQuery.dog, queryParams.dog);
+
+        done();
+      });
+    });
+
+  });
+
   describe('Twitter', function () {
     var m = new Mouth();
     var credentials = {
@@ -82,6 +145,7 @@ describe('Mouth', function () {
         should.not.exist(err);
         res.should.have.status(200);
 
+        should.exist(data);
         var parsedQuery = querystring.parse(data);
         should.exist(parsedQuery.oauth_token);
         should.exist(parsedQuery.oauth_token_secret);
@@ -97,11 +161,8 @@ describe('Mouth', function () {
       _verify(m, credentials.accessToken, credentials.accessTokenSecret, done);
     });
 
-/*
-    it('should update and delete status with xAuth credentials', function (done) {
-      _updateAndDelete(m, credentials.accessToken, credentials.accessTokenSecret, done);
-    });
-*/
+//    it('should update and delete status with xAuth credentials', function (done) {
+//      _updateAndDelete(m, credentials.accessToken, credentials.accessTokenSecret, done);
+//    });
   });
-
 });
