@@ -9,6 +9,7 @@
 */
 
 var crypto = require('crypto'),
+  querystring = require('querystring'),
   URL = require('url'),
   https = require('https'),
   http = require('http'),
@@ -47,6 +48,11 @@ Mouth.prototype._getTimestamp= function() {
 Object.prototype._sortedKeys = function () {
   return Object.keys(this).sort();
 };
+Object.prototype._cloneWithSortedKeys = function () {
+  var shadow = {}, self = this;
+  this._sortedKeys().forEach(function (key) { shadow[key] = self[key]; });
+  return shadow;
+};
 
 Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffer, contentType, consumerKey, consumerSecret, userToken, userSecret, callbackURL, verifier, callback) {
   queryParams = queryParams || {};
@@ -56,11 +62,11 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
   userSecret = userSecret || '';
 
   var oauthParams = {
-    'oauth_nonce': this._getNonce(42),
-    'oauth_version': '1.0',
-    'oauth_timestamp': this._getTimestamp(),
-    'oauth_consumer_key': consumerKey,
-    'oauth_signature_method': 'HMAC-SHA1'
+    oauth_nonce: this._getNonce(42),
+    oauth_version: '1.0',
+    oauth_timestamp: this._getTimestamp(),
+    oauth_consumer_key: consumerKey,
+    oauth_signature_method: 'HMAC-SHA1'
   };
   // optional params
   if (userToken && userToken.length > 0) {
@@ -78,20 +84,16 @@ Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffe
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(oauthParams[key]));
   });
 
-  var queryParts = [];
   queryParams._sortedKeys().forEach(function (key) {
-    queryParts.push(key + '=' + queryParams[key]);
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]));
   });
-  var flatQuery = encodeURI(queryParts.join('&'));
+  var flatQuery = querystring.stringify(queryParams._cloneWithSortedKeys());
 
-  var bodyParts = [];
   postParams._sortedKeys().forEach(function (key) {
-    bodyParts.push(key + '=' + postParams[key]);
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(postParams[key]));
   });
+  var flatBody = querystring.stringify(postParams._cloneWithSortedKeys());
   parts.sort();
-  var flatBody = bodyParts.join('&');
 
   var base = encodeURIComponent(method) + '&' + encodeURIComponent(url) + '&' + encodeURIComponent(parts.join('&'));
   var key = consumerSecret + '&' + userSecret;
