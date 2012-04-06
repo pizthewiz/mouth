@@ -41,15 +41,6 @@ function _updateAndDelete(m, accessToken, accessTokenSecret, done) {
 }
 
 describe('Mouth', function () {
-  describe('test config', function () {
-    should.exist(config.twitter.consumerKey);
-    should.exist(config.twitter.consumerSecret);
-    should.exist(config.twitter.slave.accessToken);
-    should.exist(config.twitter.slave.accessTokenSecret);
-    should.exist(config.twitter.indenturedServant.username);
-    should.exist(config.twitter.indenturedServant.password);
-  });
-
   describe('term.ie', function () {
     var m = new Mouth();
     var credentials = {
@@ -120,6 +111,16 @@ describe('Mouth', function () {
       accessTokenSecret: null
     };
 
+    // config
+    it('should have a valid config', function () {
+      should.exist(config.twitter.consumerKey);
+      should.exist(config.twitter.consumerSecret);
+      should.exist(config.twitter.slave.accessToken);
+      should.exist(config.twitter.slave.accessTokenSecret);
+      should.exist(config.twitter.indenturedServant.username);
+      should.exist(config.twitter.indenturedServant.password);
+    });
+
     // slave
     it('should verify slave credentials', function (done) {
       _verify(m, config.twitter.slave.accessToken, config.twitter.slave.accessTokenSecret, done);
@@ -130,8 +131,6 @@ describe('Mouth', function () {
     });
 
     // TODO - update with media and delete
-
-
 
     // xAuth
     it('should create credentials through xAuth and validate', function (done) {
