@@ -129,6 +129,20 @@ describe('Mouth', function () {
       _verify(m, config.twitter.slave.accessToken, config.twitter.slave.accessTokenSecret, done);
     });
 
+    it('should return OK from help/test', function (done) {
+      var queryParams = {};
+      var postParams = {};
+      m.shit('GET', 'http://api.twitter.com/1/help/test.json', queryParams, postParams, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, config.twitter.slave.accessToken, config.twitter.slave.accessTokenSecret, null, null, function (err, data, res) {
+        should.not.exist(err);
+        res.should.have.status(200);
+        res.should.be.json;
+        var data = JSON.parse(data);
+        should.equal(data, 'ok');
+
+        done();        
+      });
+    });
+
     it('should update and delete status with slave credentials', function (done) {
       _updateAndDelete(m, config.twitter.slave.accessToken, config.twitter.slave.accessTokenSecret, done);
     });
