@@ -15,6 +15,17 @@ function _verify(m, accessToken, accessTokenSecret, done) {
     done();
   });
 }
+function _delete(m, tweetID, accessToken, accessTokenSecret, done) {
+    var queryParams = {};
+    var postParams = {};
+    var url = 'http://api.twitter.com/1/statuses/destroy/' + tweetID + '.json';
+    m.shit('POST', url, queryParams, postParams, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, accessToken, accessTokenSecret, null, null, function (err, data, res) {
+      should.not.exist(err);
+      res.should.have.status(200);
+      res.should.be.json;
+      done();
+    });
+}
 function _updateAndDelete(m, accessToken, accessTokenSecret, done) {
   var queryParams = {};
   var postParams = {
@@ -27,16 +38,8 @@ function _updateAndDelete(m, accessToken, accessTokenSecret, done) {
     data = JSON.parse(data);
     should.exist(data.id_str);
     var tweetID = data.id_str;
-  
-    queryParams = {};
-    postParams = {};
-    var url = 'http://api.twitter.com/1/statuses/destroy/' + tweetID + '.json';
-    m.shit('POST', url, queryParams, postParams, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, accessToken, accessTokenSecret, null, null, function (err, data, res) {
-      should.not.exist(err);
-      res.should.have.status(200);
-      res.should.be.json;
-      done();
-    });
+
+    _delete(m, tweetID, accessToken, accessTokenSecret, done);
   });
 }
 
