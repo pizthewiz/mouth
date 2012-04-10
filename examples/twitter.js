@@ -24,7 +24,7 @@ m.shit('GET', 'https://api.twitter.com/account/verify_credentials.json', queryPa
     process.exit(code=1);
   }
 
-  var data = JSON.parse(data);
+  data = JSON.parse(data);
   var screenName = data.screen_name;
 
   postParams = {
