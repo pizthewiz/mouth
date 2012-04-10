@@ -15,23 +15,20 @@ var crypto = require('crypto'),
   http = require('http'),
   util = require('util');
 
-module.exports = Mouth;
-function Mouth() {
-}
-
-module.exports.version = '0.0.2-pre';
+exports = module.exports = {};
+exports.version = '0.0.2-pre';
 
 // yoinked from node-oauth
-Mouth.prototype.NONCE_CHARS= [
+NONCE_CHARS= [
   'a','b','c','d','e','f','g','h','i','j','k','l','m','n',
   'o','p','q','r','s','t','u','v','w','x','y','z','A','B',
   'C','D','E','F','G','H','I','J','K','L','M','N','O','P',
   'Q','R','S','T','U','V','W','X','Y','Z','0','1','2','3',
   '4','5','6','7','8','9'
 ];
-Mouth.prototype._getNonce= function(size) {
+_getNonce= function(size) {
    var result = [];
-   var chars= this.NONCE_CHARS;
+   var chars= NONCE_CHARS;
    var char_pos;
    var nonce_chars_length= chars.length;
 
@@ -41,7 +38,7 @@ Mouth.prototype._getNonce= function(size) {
    }
    return result.join('');
 };
-Mouth.prototype._getTimestamp= function() {
+_getTimestamp= function() {
   return Math.floor( (new Date()).getTime() / 1000 );
 };
 
@@ -54,17 +51,17 @@ Object.prototype._cloneWithSortedKeys = function () {
   return shadow;
 };
 
-Mouth.prototype.shit = function (method, url, queryParams, postParams, postBuffer, contentType, consumerKey, consumerSecret, userToken, userSecret, callbackURL, verifier, callback) {
+exports.shit = function (method, url, queryParams, postParams, postBuffer, contentType, consumerKey, consumerSecret, userToken, userSecret, callbackURL, verifier, callback) {
   queryParams = queryParams || {};
   postParams = postParams || {};
-  postBuffer = postBuffer || '';
+  postBuffer = postBuffer;
   contentType = contentType || 'application/x-www-form-urlencoded';
   userSecret = userSecret || '';
 
   var oauthParams = {
-    oauth_nonce: this._getNonce(42),
+    oauth_nonce: _getNonce(42),
     oauth_version: '1.0',
-    oauth_timestamp: this._getTimestamp(),
+    oauth_timestamp: _getTimestamp(),
     oauth_consumer_key: consumerKey,
     oauth_signature_method: 'HMAC-SHA1'
   };

@@ -1,13 +1,12 @@
 
-var Mouth = require('../mouth'),
+var mouth = require('../mouth'),
   config = require('./config'),
   should = require('should'),
   querystring = require('querystring'),
   util = require('util');
 
-
-function _verify(m, accessToken, accessTokenSecret, done) {
-  m.shit('GET', 'https://api.twitter.com/account/verify_credentials.json', {}, {}, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, accessToken, accessTokenSecret, null, null, function (err, data, res) {
+function _verify(accessToken, accessTokenSecret, done) {
+  mouth.shit('GET', 'https://api.twitter.com/account/verify_credentials.json', {}, {}, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, accessToken, accessTokenSecret, null, null, function (err, data, res) {
     should.not.exist(err);
     res.should.have.status(200);
     res.should.be.json;
@@ -15,23 +14,23 @@ function _verify(m, accessToken, accessTokenSecret, done) {
     done();
   });
 }
-function _delete(m, tweetID, accessToken, accessTokenSecret, done) {
+function _delete(tweetID, accessToken, accessTokenSecret, done) {
     var queryParams = {};
     var postParams = {};
     var url = 'http://api.twitter.com/1/statuses/destroy/' + tweetID + '.json';
-    m.shit('POST', url, queryParams, postParams, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, accessToken, accessTokenSecret, null, null, function (err, data, res) {
+    mouth.shit('POST', url, queryParams, postParams, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, accessToken, accessTokenSecret, null, null, function (err, data, res) {
       should.not.exist(err);
       res.should.have.status(200);
       res.should.be.json;
       done();
     });
 }
-function _updateAndDelete(m, accessToken, accessTokenSecret, done) {
+function _updateAndDelete(accessToken, accessTokenSecret, done) {
   var queryParams = {};
   var postParams = {
     'status': '{MOUTH TEST SUITE SLUG}'
   };
-  m.shit('POST', 'http://api.twitter.com/1/statuses/update.json', queryParams, postParams, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, accessToken, accessTokenSecret, null, null, function (err, data, res) {
+  mouth.shit('POST', 'http://api.twitter.com/1/statuses/update.json', queryParams, postParams, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, accessToken, accessTokenSecret, null, null, function (err, data, res) {
     should.not.exist(err);
     res.should.have.status(200);
     res.should.be.json;
@@ -39,20 +38,19 @@ function _updateAndDelete(m, accessToken, accessTokenSecret, done) {
     should.exist(data.id_str);
     var tweetID = data.id_str;
 
-    _delete(m, tweetID, accessToken, accessTokenSecret, done);
+    _delete(tweetID, accessToken, accessTokenSecret, done);
   });
 }
 
-describe('Mouth', function () {
+describe('mouth', function () {
   describe('term.ie', function () {
-    var m = new Mouth();
     var credentials = {
       accessToken: null,
       accessTokenSecret: null
     };
 
     it('should GET a request token', function (done) {
-      m.shit('GET', 'http://term.ie/oauth/example/request_token.php', {}, {}, null, null, 'key', 'secret', null, null, null, null, function (err, data, res) {
+      mouth.shit('GET', 'http://term.ie/oauth/example/request_token.php', {}, {}, null, null, 'key', 'secret', null, null, null, null, function (err, data, res) {
         should.not.exist(err);
         res.should.have.status(200);
 
@@ -69,7 +67,7 @@ describe('Mouth', function () {
     });
 
     it('should GET an access token', function (done) {
-      m.shit('GET', 'http://term.ie/oauth/example/access_token.php', {}, {}, null, null, 'key', 'secret', credentials.accessToken, credentials.accessTokenSecret, null, null, function (err, data, res) {
+      mouth.shit('GET', 'http://term.ie/oauth/example/access_token.php', {}, {}, null, null, 'key', 'secret', credentials.accessToken, credentials.accessTokenSecret, null, null, function (err, data, res) {
         should.not.exist(err);
         res.should.have.status(200);
 
@@ -90,7 +88,7 @@ describe('Mouth', function () {
         foo: 'bar',
         dog: 'yes'
       };
-      m.shit('GET', 'http://term.ie/oauth/example/echo_api.php', queryParams, {}, null, null, 'key', 'secret', credentials.accessToken, credentials.accessTokenSecret, null, null, function (err, data, res) {
+      mouth.shit('GET', 'http://term.ie/oauth/example/echo_api.php', queryParams, {}, null, null, 'key', 'secret', credentials.accessToken, credentials.accessTokenSecret, null, null, function (err, data, res) {
         should.not.exist(err);
         res.should.have.status(200);
 
@@ -108,7 +106,6 @@ describe('Mouth', function () {
   });
 
   describe('Twitter', function () {
-    var m = new Mouth();
     var credentials = {
       accessToken: null,
       accessTokenSecret: null
@@ -126,13 +123,13 @@ describe('Mouth', function () {
 
     // slave
     it('should verify slave credentials', function (done) {
-      _verify(m, config.twitter.slave.accessToken, config.twitter.slave.accessTokenSecret, done);
+      _verify(config.twitter.slave.accessToken, config.twitter.slave.accessTokenSecret, done);
     });
 
     it('should return OK from help/test', function (done) {
       var queryParams = {};
       var postParams = {};
-      m.shit('GET', 'http://api.twitter.com/1/help/test.json', queryParams, postParams, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, config.twitter.slave.accessToken, config.twitter.slave.accessTokenSecret, null, null, function (err, data, res) {
+      mouth.shit('GET', 'http://api.twitter.com/1/help/test.json', queryParams, postParams, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, config.twitter.slave.accessToken, config.twitter.slave.accessTokenSecret, null, null, function (err, data, res) {
         should.not.exist(err);
         res.should.have.status(200);
         res.should.be.json;
@@ -144,7 +141,7 @@ describe('Mouth', function () {
     });
 
     it('should update and delete status with slave credentials', function (done) {
-      _updateAndDelete(m, config.twitter.slave.accessToken, config.twitter.slave.accessTokenSecret, done);
+      _updateAndDelete(config.twitter.slave.accessToken, config.twitter.slave.accessTokenSecret, done);
     });
 
     // TODO - update with media and delete
@@ -157,7 +154,7 @@ describe('Mouth', function () {
         'x_auth_password': config.twitter.indenturedServant.password,
         'x_auth_mode': 'client_auth'
       };
-      m.shit('POST', 'https://api.twitter.com/oauth/access_token', queryParams, postParams, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, null, null, null, null, function (err, data, res) {
+      mouth.shit('POST', 'https://api.twitter.com/oauth/access_token', queryParams, postParams, null, null, config.twitter.consumerKey, config.twitter.consumerSecret, null, null, null, null, function (err, data, res) {
         should.not.exist(err);
         res.should.have.status(200);
 
@@ -174,11 +171,11 @@ describe('Mouth', function () {
     });
 
     it('should verify xAuth credentials', function (done) {
-      _verify(m, credentials.accessToken, credentials.accessTokenSecret, done);
+      _verify(credentials.accessToken, credentials.accessTokenSecret, done);
     });
 
 //    it('should update and delete status with xAuth credentials', function (done) {
-//      _updateAndDelete(m, credentials.accessToken, credentials.accessTokenSecret, done);
+//      _updateAndDelete(credentials.accessToken, credentials.accessTokenSecret, done);
 //    });
   });
 });
