@@ -3,6 +3,7 @@ NOW
 [X] add basic testing via mocha
 [ ] rename the shit function to something recognizable
 [X] add twitter example
+[ ] add proper request/access examples with Flatiron
 [ ] add google example
 [ ] expose oauthParams var to override oauth_signature_method and more
 
@@ -10,3 +11,4 @@ LATER
 [ ] rework Mouth object to hold instance state, consumer key/secret and oauth token/secret where appropriate?
 [ ] combine postParams and postBuffer vars and add var to control if included in the base for signing?
 [ ] add multipart contentType and buffer example, twitter update_with_media.json?
+[ ] consider simple wrapper on OAuth 2 now that facebook, google and github are over there?
