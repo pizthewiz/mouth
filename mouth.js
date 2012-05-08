@@ -16,7 +16,7 @@ var crypto = require('crypto'),
   util = require('util');
 
 exports = module.exports = {};
-exports.version = '0.0.2-pre';
+exports.version = '0.0.2';
 
 // yoinked from node-oauth
 NONCE_CHARS= [
