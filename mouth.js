@@ -16,7 +16,7 @@ var crypto = require('crypto'),
   util = require('util');
 
 exports = module.exports = {};
-exports.version = '0.0.2';
+exports.version = '0.0.3-pre';
 
 // yoinked from node-oauth
 NONCE_CHARS= [
@@ -42,15 +42,33 @@ _getTimestamp= function() {
   return Math.floor( (new Date()).getTime() / 1000 );
 };
 
-Object.prototype._sortedKeys = function () {
-  return Object.keys(this).sort();
+_sortedKeys = function (obj) {
+  return Object.keys(obj).sort();
 };
-Object.prototype._cloneWithSortedKeys = function () {
-  var shadow = {}, self = this;
-  this._sortedKeys().forEach(function (key) { shadow[key] = self[key]; });
+_cloneWithSortedKeys = function (obj) {
+  var shadow = {};
+  _sortedKeys(obj).forEach(function (key) { shadow[key] = obj[key]; });
   return shadow;
 };
 
+/**
+ * Assemble and dispatch OAuth authenticated request
+ *
+ * @param {String} method
+ * @param {String} url
+ * @param {Object} queryParams
+ * @param {Object} postParams
+ * @param {Buffer} postBuffer
+ * @param {String} contentType
+ * @param {String} consumerKey
+ * @param {String} consumerSecret
+ * @param {String} userToken
+ * @param {String} userSecret
+ * @param {String} callbackURL
+ * @param {String} verifier
+ * @param {Function} callback
+ * @api public
+ */
 exports.shit = function (method, url, queryParams, postParams, postBuffer, contentType, consumerKey, consumerSecret, userToken, userSecret, callbackURL, verifier, callback) {
   queryParams = queryParams || {};
   postParams = postParams || {};
@@ -77,19 +95,19 @@ exports.shit = function (method, url, queryParams, postParams, postBuffer, conte
   }
 
   var parts = [];
-  oauthParams._sortedKeys().forEach(function (key) {
+  _sortedKeys(oauthParams).forEach(function (key) {
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(oauthParams[key]));
   });
 
-  queryParams._sortedKeys().forEach(function (key) {
+  _sortedKeys(queryParams).forEach(function (key) {
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]));
   });
-  var flatQuery = querystring.stringify(queryParams._cloneWithSortedKeys());
+  var flatQuery = querystring.stringify(_cloneWithSortedKeys(queryParams));
 
-  postParams._sortedKeys().forEach(function (key) {
+  _sortedKeys(postParams).forEach(function (key) {
     parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(postParams[key]));
   });
-  var flatBody = querystring.stringify(postParams._cloneWithSortedKeys());
+  var flatBody = querystring.stringify(_cloneWithSortedKeys(postParams));
   parts.sort();
 
   var base = encodeURIComponent(method) + '&' + encodeURIComponent(url) + '&' + encodeURIComponent(parts.join('&'));
@@ -97,7 +115,7 @@ exports.shit = function (method, url, queryParams, postParams, postBuffer, conte
   var sig = crypto.createHmac('sha1', key).update(base).digest('base64');
 
   var authHeader = 'OAuth oauth_signature="' + encodeURIComponent(sig) + '"';
-  oauthParams._sortedKeys().forEach(function (key) {
+  _sortedKeys(oauthParams).forEach(function (key) {
     authHeader += ', ' + key + '="' + encodeURIComponent(oauthParams[key]) + '"';
   });
 
