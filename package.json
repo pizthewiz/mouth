@@ -1,18 +1,21 @@
 {
-	"name": "mouth",
-	"description": "skinny OAuth 1.0 library",
-	"keywords": ["oauth", "authentication"],
-	"version": "0.0.2-pre",
-	"author": "Jean-Pierre Mouilleseaux <jpm@chordedconstructions.com>",
-  "repository":{
+  "name": "mouth",
+  "description": "skinny OAuth 1.0 library",
+  "keywords": ["oauth", "authentication"],
+  "version": "0.0.2-pre",
+  "author": "Jean-Pierre Mouilleseaux <jpm@chordedconstructions.com>",
+  "repository": {
     "type": "git",
     "url": "https://github.com/pizthewiz/mouth"
   },
-	"main": "./mouth.js",
+  "main": "./mouth.js",
   "devDependencies": {
-    "mocha": ">=1.0.0",
-    "should": ">=0.6.0"
+    "mocha": "*",
+    "should": "*",
+    "flatiron": "*",
+    "union": "*",
+    "connect": "*"
   },
-	"engine": { "node": ">=0.6" },
-	"license": "MIT"
+  "engine": { "node": ">=0.6" },
+  "license": "MIT"
 }
