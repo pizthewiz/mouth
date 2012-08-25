@@ -1,8 +1,8 @@
 
 NOW
-[X] add basic testing via mocha
 [ ] rename the shit function to something recognizable
-[X] add twitter example
+[ ] migrate from http.createClient to http.request
+[ ] split up OAuth handling from http request like GFTwitterManager
 [ ] add proper request/access examples with Flatiron
 [ ] add google example
 [ ] expose oauthParams var to override oauth_signature_method and more
