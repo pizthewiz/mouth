@@ -1,9 +1,9 @@
 
 NOW
 
+* add more tests
 * migrate examples to use http.request
-* add proper request/access examples with Flatiron
-* add google example
+* add full request token/auth token google, flickr and rdio examples
 
 LATER
 
