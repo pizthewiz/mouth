@@ -66,15 +66,17 @@ _sortedKeys = function (obj) {
  * @param {String} consumerSecret
  * @param {String} userToken
  * @param {String} userSecret
+ * @param {Object} extraOauthParams
  * @api public
  */
-exports.authorizationHeaderString = function (method, url, queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret, callbackURL) {
+exports.authorizationHeaderString = function (method, url, queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret, extraOauthParams) {
 	method = method.toUpperCase();
 	queryParams = queryParams || {};
 	postParams = postParams || {};
   userSecret = userSecret || '';
 
 	// TODO - consider stripping queryParams off url, adding to queryParams
+	//	lower protocol and remote port
 	// TODO - validate shit
 	//	method legit/uppercase
 	//	no postParams unless POST'ing
@@ -90,8 +92,8 @@ exports.authorizationHeaderString = function (method, url, queryParams, postPara
 	if (userToken && userToken !== '') {
 		oauthParams['oauth_token'] = userToken;
 	}
-	if (callbackURL && callbackURL !== '') {
-		oauthParams['oauth_callback'] = callbackURL;
+	if (extraOauthParams) {
+		_extend(oauthParams, extraOauthParams);
 	}
 
 	var allParams = _clone(oauthParams);
