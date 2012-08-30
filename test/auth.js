@@ -41,7 +41,7 @@ function _equalHeaderSubcontents(actual, expected) {
 
 describe('mouth', function () {
 	// https://dev.twitter.com/docs/auth/authorizing-request + https://dev.twitter.com/docs/auth/creating-signature
-	it('should construct the expected Authorization header for a Twitter status update', function () {
+	it('should construct expected Authorization header for Twitter status update', function () {
 		_getNonce= function(size) { return 'kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg'; };
 		_getTimestamp= function() { return '1318622958'; };
 
@@ -71,5 +71,37 @@ describe('mouth', function () {
 		// NB - strangely the expected params are not ordered and has an optional realm param
 //		should.equal(result, 'OAuth realm="http://photos.example.net/", oauth_consumer_key="dpf43f3p2l4k3l03", oauth_token="nnch734d00sl2jdk", oauth_signature_method="HMAC-SHA1", oauth_signature="tR3%2BTy81lMeYAr%2FFid0kMTYa%2FWM%3D", oauth_timestamp="1191242096", oauth_nonce="kllo9940pd9333jh", oauth_version="1.0"');
 		_equalHeaderSubcontents(result, 'OAuth realm="http://photos.example.net/", oauth_consumer_key="dpf43f3p2l4k3l03", oauth_token="nnch734d00sl2jdk", oauth_signature_method="HMAC-SHA1", oauth_signature="tR3%2BTy81lMeYAr%2FFid0kMTYa%2FWM%3D", oauth_timestamp="1191242096", oauth_nonce="kllo9940pd9333jh", oauth_version="1.0"');
+	});
+
+	// http://term.ie/oauth/example/index.php
+	it('should construct expected Authorization header for term.io request token request example', function () {
+		_getNonce= function(size) { return '07d2f423bd689a4eafd1e316f7fc3b5e'; };
+		_getTimestamp= function() { return '1346348131'; };
+
+		var queryParams = null;
+		var postParams = null;
+		var consumerKey = 'key';
+		var consumerSecret = 'secret';
+		var userToken = null;
+		var userSecret = null;
+		var result = mouth.authorizationHeaderString('GET', 'http://term.ie/oauth/example/request_token.php', queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret, null);
+		// NB - the example in question provides the query params not the header string, something will need to be sorted out in regards to that
+		should.equal(result, 'OAuth oauth_consumer_key="key", oauth_nonce="07d2f423bd689a4eafd1e316f7fc3b5e", oauth_signature="Z%2FY34vJ%2BdRS5xNhD8f0MZgHOe7k%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1346348131", oauth_version="1.0"');
+		_equalHeaderSubcontents(result, 'OAuth oauth_consumer_key="key", oauth_nonce="07d2f423bd689a4eafd1e316f7fc3b5e", oauth_signature="Z%2FY34vJ%2BdRS5xNhD8f0MZgHOe7k%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1346348131", oauth_version="1.0"');
+	});
+	it('should construct expected Authorization header for term.io access token request example', function () {
+		_getNonce= function(size) { return 'bce4883d7e2e61e7c8a2b978cb91fc65'; };
+		_getTimestamp= function() { return '1346348131'; };
+
+		var queryParams = null;
+		var postParams = null;
+		var consumerKey = 'key';
+		var consumerSecret = 'secret';
+		var userToken = 'requestkey';
+		var userSecret = 'requestsecret';
+		var result = mouth.authorizationHeaderString('GET', 'http://term.ie/oauth/example/access_token.php', queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret, null);
+		// NB - the example in question provides the query params not the header string, something will need to be sorted out in regards to that
+		should.equal(result, 'OAuth oauth_consumer_key="key", oauth_nonce="bce4883d7e2e61e7c8a2b978cb91fc65", oauth_signature="TU3idtc9mybcPV2u5uMKbHe2kY4%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1346348131", oauth_token="requestkey", oauth_version="1.0"');
+		_equalHeaderSubcontents(result, 'OAuth oauth_consumer_key="key", oauth_nonce="bce4883d7e2e61e7c8a2b978cb91fc65", oauth_signature="TU3idtc9mybcPV2u5uMKbHe2kY4%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1346348131", oauth_token="requestkey", oauth_version="1.0"');
 	});
 });
