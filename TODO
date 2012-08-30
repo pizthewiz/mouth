@@ -1,11 +1,10 @@
 
 NOW
-[ ] rename the shit function to something recognizable
-[ ] migrate from http.createClient to http.request
-[ ] split up OAuth handling from http request like GFTwitterManager
+[ ] remove the shit method and all examples that used it
+[ ] sort out how to test authorizationHeaderString when the nonce and timestamp need to be mocked
+[ ] migrate examples to use http.request
 [ ] add proper request/access examples with Flatiron
 [ ] add google example
-[ ] expose oauthParams var to override oauth_signature_method and more
 
 LATER
 [ ] rework Mouth object to hold instance state, consumer key/secret and oauth token/secret where appropriate?

@@ -41,7 +41,13 @@ _getNonce= function(size) {
 _getTimestamp= function() {
   return Math.floor( (new Date()).getTime() / 1000 );
 };
-
+_extend = function(dest, source) {
+	Object.keys(source).forEach(function (key) { dest[key] = source[key]; });
+	return dest;
+}
+_clone = function(source) {
+	return _extend({}, source);
+};
 _sortedKeys = function (obj) {
   return Object.keys(obj).sort();
 };
@@ -50,6 +56,7 @@ _cloneWithSortedKeys = function (obj) {
   _sortedKeys(obj).forEach(function (key) { shadow[key] = obj[key]; });
   return shadow;
 };
+
 
 /**
  * Assemble and dispatch OAuth authenticated request
@@ -192,4 +199,61 @@ exports.shit = function (method, url, queryParams, postParams, postBuffer, conte
     }
   }
   req.end();
+};
+
+/**
+ * Generate the OAuth 1.0 Authorization header content
+ *
+ * @param {String} method
+ * @param {String} url
+ * @param {Object} queryParams
+ * @param {Object} postParams
+ * @param {String} contentType
+ * @param {String} consumerKey
+ * @param {String} consumerSecret
+ * @param {String} userToken
+ * @param {String} userSecret
+ * @api public
+ */
+exports.authorizationHeaderString = function (method, url, queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret) {
+	method = method.toUpperCase();
+	queryParams = queryParams || {};
+	postParams = postParams || {};
+  userSecret = userSecret || '';
+
+	// TODO - consider stripping queryParams off url, adding to queryParams
+	// TODO - validate shit
+	//	method legit/uppercase
+	//	no postParams unless POST'ing
+	//	consumerKey/Secret is good
+
+	var oauthParams = {
+		'oauth_nonce': _getNonce(42),
+		'oauth_version': '1.0',
+		'oauth_timestamp': _getTimestamp(),
+		'oauth_consumer_key': consumerKey,
+		'oauth_signature_method': 'HMAC-SHA1'
+	};
+	if (userToken) {
+		oauthParams['oauth_token'] = userToken;
+	}
+
+	var allParams = _clone(oauthParams);
+	_extend(allParams, queryParams);
+	_extend(allParams, postParams);
+	var parts = _sortedKeys(allParams).map(function (key) {
+		return escape(key) + '=' + escape(allParams[key]);
+	});
+	var paramString = parts.join('&').replace('+', '%2B'); // damned + not caught by escape()?!
+
+	var base = method + '&' + encodeURIComponent(url) + '&' + encodeURIComponent(paramString);
+	var key = consumerSecret + '&' + userSecret;
+	var sig = crypto.createHmac('sha1', key).update(base).digest('base64');
+	oauthParams['oauth_signature'] = sig;
+
+	var headerString = 'OAuth';
+	headerString += _sortedKeys(oauthParams).map(function (key) {
+		return ' ' + encodeURIComponent(key) + '="' + encodeURIComponent(oauthParams[key]) + '"';
+	}).join(',');
+	return headerString;
 };
