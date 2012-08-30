@@ -2,7 +2,7 @@
   "name": "mouth",
   "description": "skinny OAuth 1.0 library",
   "keywords": ["oauth", "authentication"],
-  "version": "0.0.2-pre",
+  "version": "0.0.3-pre",
   "author": "Jean-Pierre Mouilleseaux <jpm@chordedconstructions.com>",
   "repository": {
     "type": "git",
