@@ -68,7 +68,7 @@ _sortedKeys = function (obj) {
  * @param {String} userSecret
  * @api public
  */
-exports.authorizationHeaderString = function (method, url, queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret) {
+exports.authorizationHeaderString = function (method, url, queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret, callbackURL) {
 	method = method.toUpperCase();
 	queryParams = queryParams || {};
 	postParams = postParams || {};
@@ -87,8 +87,11 @@ exports.authorizationHeaderString = function (method, url, queryParams, postPara
 		'oauth_consumer_key': consumerKey,
 		'oauth_signature_method': 'HMAC-SHA1'
 	};
-	if (userToken) {
+	if (userToken && userToken !== '') {
 		oauthParams['oauth_token'] = userToken;
+	}
+	if (callbackURL && callbackURL !== '') {
+		oauthParams['oauth_callback'] = callbackURL;
 	}
 
 	var allParams = _clone(oauthParams);
