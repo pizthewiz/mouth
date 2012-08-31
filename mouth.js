@@ -121,8 +121,7 @@ exports.authorizationHeaderString = function (method, url, queryParams, postPara
 	var sig = crypto.createHmac('sha1', key).update(base).digest('base64');
 	oauthParams['oauth_signature'] = sig;
 
-	var headerString = 'OAuth';
-	headerString += _sortedKeys(oauthParams).map(function (key) {
+	var headerString = 'OAuth' + _sortedKeys(oauthParams).map(function (key) {
 		return ' ' + encodeURIComponent(key) + '="' + encodeURIComponent(oauthParams[key]) + '"';
 	}).join(',');
 	return headerString;
