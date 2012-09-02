@@ -72,7 +72,7 @@ _sortedKeys = function (obj) {
 
 
 /**
- * Generate the OAuth 1.0 Authorization header content
+ * authorizationHeaderString - generate OAuth 1.0 Authorization header content string
  *
  * @param {String} method
  * @param {String} url
@@ -132,7 +132,7 @@ exports.authorizationHeaderString = authorizationHeaderString = function (method
 };
 
 /**
- * Generate the OAuth 1.0 Authorization header content
+ * authenticatedRequest - wrapper for the http and https request function with an OAuth Authentication header
  *
  * @param {String} method
  * @param {String} url
