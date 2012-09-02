@@ -21,11 +21,16 @@
            +=+++=========='
              ''=+====='
 
-	MOUTH - OAuth 1.0 Authentication header generator
+	MOUTH - OAuth 1.0 wrapper
 	http://github.com/pizthewiz/mouth
 */
 
-var crypto = require('crypto');
+var crypto = require('crypto'),
+	parse = require('url').parse,
+	format = require('url').format,
+	querystring = require('querystring'),
+	http = require('http'),
+	https = require('https');
 
 exports = module.exports = {};
 exports.version = '0.0.3-pre';
@@ -39,16 +44,16 @@ NONCE_CHARS= [
   '4','5','6','7','8','9'
 ];
 _getNonce= function(size) {
-   var result = [];
-   var chars= NONCE_CHARS;
-   var char_pos;
-   var nonce_chars_length= chars.length;
-
-   for (var i = 0; i < size; i++) {
-       char_pos= Math.floor(Math.random() * nonce_chars_length);
-       result[i]=  chars[char_pos];
-   }
-   return result.join('');
+	var result = [];
+	var chars= NONCE_CHARS;
+	var char_pos;
+	var nonce_chars_length= chars.length;
+	
+	for (var i = 0; i < size; i++) {
+		char_pos= Math.floor(Math.random() * nonce_chars_length);
+		result[i]=  chars[char_pos];
+	}
+	return result.join('');
 };
 _getTimestamp= function() {
   return Math.floor( (new Date()).getTime() / 1000 );
@@ -73,7 +78,6 @@ _sortedKeys = function (obj) {
  * @param {String} url
  * @param {Object} queryParams
  * @param {Object} postParams
- * @param {String} contentType
  * @param {String} consumerKey
  * @param {String} consumerSecret
  * @param {String} userToken
@@ -81,7 +85,7 @@ _sortedKeys = function (obj) {
  * @param {Object} extraOauthParams
  * @api public
  */
-exports.authorizationHeaderString = function (method, url, queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret, extraOauthParams) {
+exports.authorizationHeaderString = authorizationHeaderString = function (method, url, queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret, extraOauthParams) {
 	method = method.toUpperCase();
 	queryParams = queryParams || {};
 	postParams = postParams || {};
@@ -126,3 +130,101 @@ exports.authorizationHeaderString = function (method, url, queryParams, postPara
 	}).join(',');
 	return headerString;
 };
+
+/**
+ * Generate the OAuth 1.0 Authorization header content
+ *
+ * @param {String} method
+ * @param {String} url
+ * @param {Object} queryParams
+ * @param {Object|Buffer} postContent
+ * @param {String} contentType
+ * @param {String} consumerKey
+ * @param {String} consumerSecret
+ * @param {String} userToken
+ * @param {String} userSecret
+ * @param {Object} extraOauthParams
+ * @param {Function} callback
+ * @api public
+ */
+exports.authenticatedRequest = function (method, url, queryParams, postContent, contentType, consumerKey, consumerSecret, userToken, userSecret, extraOauthParams, callback) {
+	// strip query params off url and place in queryParams
+	var pairs = parse(url);
+	if (pairs['query']) {
+		var q = querystring.parse(pairs['query']);
+		// queryParams overrides query params in url
+		queryParams = _extend(q, queryParams || {});
+
+		// recraft url without query
+		pairs['search'] = ''; pairs['query'] = {};
+		url = format(p);
+	}
+
+	// retool postContent as postParams if it is an object
+	var postParams = Buffer.isBuffer(postContent) ? null : postContent;
+	var authString = authorizationHeaderString(method, url, queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret, null);
+
+	// put queryParams into parsed url results
+	if (queryParams) {
+		pairs['search'] = ''; pairs['query'] = queryParams;
+	}
+
+	var options = {
+		'hostname': pairs['hostname'],
+		'path': pairs['path'], // includes query when appropriate
+		'method': method,
+		'headers': {
+			'User-Agent': 'Node.js Mouth',
+			'Host': pairs['hostname'],
+			'Accept': '*/*',
+			'Authorization': authString
+		}
+	};
+	if (pairs['port']) {
+		options['port'] = parseInt(pairs['port'], 10);
+	}
+	if (method === 'POST') {
+		var contentType = contentType || 'application/x-www-form-urlencoded', contentLength = 0;
+		if (postParams) {
+			postContent = querystring.stringify(postParams);
+			contentLength = Buffer.byteLength(postContent);
+		} else {
+			contentLength = postContent.length;
+		}
+		options['headers']['Content-Type'] = contentType;
+		options['headers']['Content-Length'] = contentLength;
+	}
+
+	// internal callback handler
+	var cb = function (err, data, res) {
+		cb = function () {};
+		callback(err, data, res);
+	};
+
+	// issue http request
+	var m = pairs['protocol'] === 'https:' ? https : http;
+	var req = m.request(options, function (res) {
+		var data = '';
+
+		res.setEncoding('utf8');
+		res.on('data', function (d) {
+      data += d;
+    });
+    res.on('end', function () {
+      cb(null, data, res);
+    });
+    res.on('close', function () {
+      cb(null, data, res);
+    });
+	});
+//	console.log(util.inspect(req));
+
+	req.on('error', function (err) {
+		cb(err);
+	});
+
+	if (postContent) {
+	 	req.write(postContent);
+	}
+	req.end();
+}
