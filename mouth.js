@@ -162,7 +162,7 @@ exports.authenticatedRequest = function (method, url, queryParams, postContent, 
 
 	// retool postContent as postParams if it is an object
 	var postParams = Buffer.isBuffer(postContent) ? null : postContent;
-	var authString = authorizationHeaderString(method, url, queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret, null);
+	var authString = authorizationHeaderString(method, url, queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret, extraOauthParams);
 
 	// put queryParams into parsed url results
 	if (queryParams) {
