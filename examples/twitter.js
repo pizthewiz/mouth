@@ -1,42 +1,62 @@
 
 var mouth = require('../mouth'),
-  util = require('util');
+  util = require('util'),
+  querystring = require('querystring');
 
 var config = {
   // application key and secret from https://dev.twitter.com/apps -> 'My Applications'
   consumerKey: null,
   consumerSecret: null,
   // access token for your application
-  accessToken: null,
-  accessTokenSecret: null
+  userToken: null,
+  userSecret: null
 };
 
-if (!(config.consumerKey && config.consumerSecret && config.accessToken && config.accessTokenSecret)) {
-  console.log('ERROR - static twitter config properties are required');
-  process.exit(code=1);
+if (!config.consumerKey || !config.consumerSecret || !config.userToken || !config.userSecret) {
+	console.log('ERROR - invalid configuration');
+	return;
 }
 
-var queryParams = {}, postParams = {};
-mouth.shit('GET', 'https://api.twitter.com/account/verify_credentials.json', queryParams, postParams, null, null, config.consumerKey, config.consumerSecret, config.accessToken, config.accessTokenSecret, null, null, function (err, data, res) {
-  if (err) {
-    console.log('ERROR - failed to verify provided credentials - ' + util.inspect(err));
+// verify application and user credentials
+mouth.authenticatedRequest('GET', 'https://api.twitter.com/1/account/verify_credentials.json', null, null, null, config.consumerKey, config.consumerSecret, config.userToken, config.userSecret, null, function (err, data, res) {
+	if (err) {
+		console.log('ERROR - failed to verify credentials - ' + util.inspect(err));
     process.exit(code=1);
-  }
+	}
 
-  data = JSON.parse(data);
-  var screenName = data.screen_name;
+	console.log('RES: ' + data);
+});
 
-  postParams = {
-    status: 'is getting rather Mouthy'
-  };
-  mouth.shit('POST', 'http://api.twitter.com/1/statuses/update.json', queryParams, postParams, null, null, config.consumerKey, config.consumerSecret, config.accessToken, config.accessTokenSecret, null, null, function (err, data, res) {
-    if (err) {
-      console.log('ERROR - failed to update twitter status - ' + util.inspect(err));
-      process.exit(code=1);
-    }
 
-    data = JSON.parse(data);
-    var hackyLink = 'http://twitter.com/#!/' + screenName + '/status/' + data.id_str;
-    console.log('successfully tweeted - ' + hackyLink);
-  });
+// post status update
+var params = {
+	'status': 'giving Mouth a quick lashing'
+};
+mouth.authenticatedRequest('POST', 'https://api.twitter.com/1/statuses/update.json', null, params, null, config.consumerKey, config.consumerSecret, config.userToken, config.userSecret, null, function (err, data, res) {
+	if (err) {
+		console.log('ERROR - failed to get xAuth access token - ' + util.inspect(err));
+    process.exit(code=1);
+	}
+
+	console.log('RES: ' + data);
+});
+
+
+// authenticate user via xAuth
+params = {
+	'x_auth_username': 'USERNAME',
+	'x_auth_password': 'PASSWORD',
+	'x_auth_mode': 'client_auth'
+};
+mouth.authenticatedRequest('POST', 'https://api.twitter.com/oauth/access_token', null, params, null, config.consumerKey, config.consumerSecret, null, null, null, function (err, data, res) {
+	if (err) {
+		console.log('ERROR - failed to get xAuth access token - ' + util.inspect(err));
+    process.exit(code=1);
+	}
+
+	params = querystring.parse(data);
+	var userToken = params['oauth_token'];
+	var userSecret = params['oauth_token_secret'];
+	console.log('userToken:' + userToken);
+	console.log('userSecret:' + userSecret);
 });
