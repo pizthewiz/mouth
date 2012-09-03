@@ -1,8 +1,8 @@
 
 NOW
 
-* sort out encoding/escaping of query/post params
 * add authenticatedRequest tests
+* add base string calculation tests
 * add full request token/auth token google, flickr and rdio examples
 
 LATER
