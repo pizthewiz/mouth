@@ -1,6 +1,6 @@
 {
   "name": "mouth",
-  "description": "skinny OAuth 1.0 library",
+  "description": "skinny OAuth 1.0 wrapper",
   "keywords": ["oauth", "authentication"],
   "version": "0.0.3-pre",
   "author": "Jean-Pierre Mouilleseaux <jpm@chordedconstructions.com>",
@@ -16,6 +16,6 @@
     "union": "*",
     "connect": "*"
   },
-  "engine": { "node": ">=0.6" },
+  "engine": { "node": ">=0.8" },
   "license": "MIT"
 }
