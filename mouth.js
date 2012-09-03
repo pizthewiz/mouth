@@ -162,7 +162,7 @@ exports.authenticatedRequest = function (method, url, queryParams, postContent, 
 
 		// recraft url without query
 		pairs['search'] = ''; pairs['query'] = {};
-		url = format(p);
+		url = format(pairs);
 	}
 
 	// retool postContent as postParams if it is an object
