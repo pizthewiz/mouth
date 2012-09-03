@@ -69,7 +69,13 @@ _clone = function(source) {
 _sortedKeys = function (obj) {
   return Object.keys(obj).sort();
 };
-
+_escape = function (obj) {
+	// http://en.wikipedia.org/wiki/Percent-encoding
+	// encode !#$&'()*+,/:;=?@[]
+	var str = obj.toString().replace(/!/g, '%21').replace(/#/g, '%23').replace(/\$/g, '%24').replace(/&/g, '%26').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A').replace(/\+/g, '%2B').replace(/,/g, '%2C').replace(/\//g, '%2F').replace(/:/g, '%3A').replace(/;/g, '%3B').replace(/=/g, '%3D').replace(/\?/g, '%3F').replace(/@/g, '%40').replace(/\[/g, '%5B').replace(/\]/g, '%5D');
+	// encode space "<>\^`{|} but not %-._~
+	return str.replace(/\ /g, '%20').replace(/\"/g, '%22').replace(/</g, '%3C').replace(/>/g, '%3E').replace(/\\/g, '%5C').replace(/\^/g, '%5C').replace(/\`/g, '%60').replace(/\{/g, '%7B').replace(/\|/g, '%7C').replace(/\}/g, '%7D');
+}
 
 /**
  * authorizationHeaderString - generate OAuth 1.0 Authorization header content string
@@ -115,10 +121,9 @@ exports.authorizationHeaderString = authorizationHeaderString = function (method
 	var allParams = _clone(oauthParams);
 	_extend(allParams, queryParams);
 	_extend(allParams, postParams);
-	var parts = _sortedKeys(allParams).map(function (key) {
-		return escape(key) + '=' + escape(allParams[key]);
-	});
-	var paramString = parts.join('&').replace('+', '%2B'); // damned + not caught by escape()?!
+	var paramString = _sortedKeys(allParams).map(function (key) {
+		return _escape(key) + '=' + _escape(allParams[key]);
+	}).join('&');
 
 	var base = method + '&' + encodeURIComponent(url) + '&' + encodeURIComponent(paramString);
 	var key = consumerSecret + '&' + userSecret;
