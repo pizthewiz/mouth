@@ -62,7 +62,7 @@ _getTimestamp= function() {
 _extend = function(dest, source) {
 	Object.keys(source).forEach(function (key) { dest[key] = source[key]; });
 	return dest;
-}
+};
 _clone = function(source) {
 	return _extend({}, source);
 };
@@ -75,7 +75,7 @@ _escape = function (obj) {
 	var str = obj.toString().replace(/!/g, '%21').replace(/#/g, '%23').replace(/\$/g, '%24').replace(/&/g, '%26').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A').replace(/\+/g, '%2B').replace(/,/g, '%2C').replace(/\//g, '%2F').replace(/:/g, '%3A').replace(/;/g, '%3B').replace(/=/g, '%3D').replace(/\?/g, '%3F').replace(/@/g, '%40').replace(/\[/g, '%5B').replace(/\]/g, '%5D');
 	// encode space "<>\^`{|} but not %-._~
 	return str.replace(/\ /g, '%20').replace(/\"/g, '%22').replace(/</g, '%3C').replace(/>/g, '%3E').replace(/\\/g, '%5C').replace(/\^/g, '%5C').replace(/\`/g, '%60').replace(/\{/g, '%7B').replace(/\|/g, '%7C').replace(/\}/g, '%7D');
-}
+};
 
 /**
  * authorizationHeaderString - generate OAuth 1.0 Authorization header content string
@@ -112,7 +112,7 @@ exports.authorizationHeaderString = authorizationHeaderString = function (method
 		'oauth_signature_method': 'HMAC-SHA1'
 	};
 	if (userToken && userToken !== '') {
-		oauthParams['oauth_token'] = userToken;
+		oauthParams.oauth_token = userToken;
 	}
 	if (extraOauthParams) {
 		_extend(oauthParams, extraOauthParams);
@@ -128,7 +128,7 @@ exports.authorizationHeaderString = authorizationHeaderString = function (method
 	var base = method + '&' + encodeURIComponent(url) + '&' + encodeURIComponent(paramString);
 	var key = consumerSecret + '&' + userSecret;
 	var sig = crypto.createHmac('sha1', key).update(base).digest('base64');
-	oauthParams['oauth_signature'] = sig;
+	oauthParams.oauth_signature = sig;
 
 	var headerString = 'OAuth' + _sortedKeys(oauthParams).map(function (key) {
 		return ' ' + encodeURIComponent(key) + '="' + encodeURIComponent(oauthParams[key]) + '"';
@@ -155,13 +155,13 @@ exports.authorizationHeaderString = authorizationHeaderString = function (method
 exports.authenticatedRequest = function (method, url, queryParams, postContent, contentType, consumerKey, consumerSecret, userToken, userSecret, extraOauthParams, callback) {
 	// strip query params off url and place in queryParams
 	var pairs = parse(url);
-	if (pairs['query']) {
-		var q = querystring.parse(pairs['query']);
+	if (pairs.query) {
+		var q = querystring.parse(pairs.query);
 		// queryParams overrides query params in url
 		queryParams = _extend(q, queryParams || {});
 
 		// recraft url without query
-		pairs['search'] = ''; pairs['query'] = {};
+		pairs.search = ''; pairs.query = {};
 		url = format(pairs);
 	}
 
@@ -171,25 +171,26 @@ exports.authenticatedRequest = function (method, url, queryParams, postContent, 
 
 	// put queryParams into parsed url results
 	if (queryParams) {
-		pairs['search'] = ''; pairs['query'] = queryParams;
+		pairs.search = ''; pairs.query = queryParams;
 	}
 
 	var options = {
-		'hostname': pairs['hostname'],
-		'path': pairs['path'], // includes query when appropriate
+		'hostname': pairs.hostname,
+		'path': pairs.path, // includes query when appropriate
 		'method': method,
 		'headers': {
 			'User-Agent': 'Node.js Mouth',
-			'Host': pairs['hostname'],
+			'Host': pairs.hostname,
 			'Accept': '*/*',
 			'Authorization': authString
 		}
 	};
-	if (pairs['port']) {
-		options['port'] = parseInt(pairs['port'], 10);
+	if (pairs.port) {
+		options.port = parseInt(pairs.port, 10);
 	}
 	if (method === 'POST') {
-		var contentType = contentType || 'application/x-www-form-urlencoded', contentLength = 0;
+		contentType = contentType || 'application/x-www-form-urlencoded';
+		var contentLength = 0;
 		if (postParams) {
 			postContent = querystring.stringify(postParams);
 			contentLength = Buffer.byteLength(postContent);
@@ -207,7 +208,7 @@ exports.authenticatedRequest = function (method, url, queryParams, postContent, 
 	};
 
 	// issue http request
-	var m = pairs['protocol'] === 'https:' ? https : http;
+	var m = pairs.protocol === 'https:' ? https : http;
 	var req = m.request(options, function (res) {
 		var data = '';
 
@@ -229,7 +230,7 @@ exports.authenticatedRequest = function (method, url, queryParams, postContent, 
 	});
 
 	if (postContent) {
-	 	req.write(postContent);
+		req.write(postContent);
 	}
 	req.end();
-}
+};
