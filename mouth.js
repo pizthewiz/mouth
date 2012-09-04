@@ -92,17 +92,26 @@ _escape = function (obj) {
  * @api public
  */
 exports.authorizationHeaderString = authorizationHeaderString = function (method, url, queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret, extraOauthParams) {
-	method = method.toUpperCase();
+	// TODO - validate arguments
+	//	method legit/uppercase
+	//	no postParams unless POST'ing
+	//	consumerKey/Secret is good
+
 	queryParams = queryParams || {};
 	postParams = postParams || {};
   userSecret = userSecret || '';
 
-	// TODO - consider stripping queryParams off url, adding to queryParams
-	//	lower protocol and remote port
-	// TODO - validate shit
-	//	method legit/uppercase
-	//	no postParams unless POST'ing
-	//	consumerKey/Secret is good
+	// strip query params off url and place in queryParams
+	var pairs = parse(url);
+	if (pairs.query) {
+		var q = querystring.parse(pairs.query);
+		// queryParams overrides query params in url
+		queryParams = _extend(q, queryParams);
+
+		// recraft url without query
+		pairs.search = ''; pairs.query = {};
+		url = format(pairs);
+	}
 
 	var oauthParams = {
 		'oauth_nonce': _getNonce(42),
@@ -153,6 +162,9 @@ exports.authorizationHeaderString = authorizationHeaderString = function (method
  * @api public
  */
 exports.authenticatedRequest = function (method, url, queryParams, postContent, contentType, consumerKey, consumerSecret, userToken, userSecret, extraOauthParams, callback) {
+	// TODO - validate arguments
+	//	no postContent unless POST'ing
+
 	// strip query params off url and place in queryParams
 	var pairs = parse(url);
 	if (pairs.query) {
