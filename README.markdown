@@ -9,14 +9,11 @@ In this example an authenticated user posts a status update to Twitter.
 var mouth = require('mouth');
 
 var consumerKey = 'KEY', consumerSecret = 'SECRET', userToken = 'TOKEN' userSecret = 'SECRET';
-
 var postParams { status: 'getting rather Mouthy' };
 mouth.authenticatedRequest('POST', 'https://api.twitter.com/1/statuses/update.json', null, postParams, null, consumerKey, consumerSecret, userToken, userSecret, null, function (err, data, res) {
-	if (err) {
-		die('ERROR - status update went pear shaped');
+	if (!err && res.statusCode == 200) {
+		console.log('successfully tweeted');
 	}
-
-  console.log('successfully tweeted');
 });
 ```
 
