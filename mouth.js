@@ -33,7 +33,7 @@ var crypto = require('crypto'),
 	https = require('https');
 
 exports = module.exports = {};
-exports.version = '0.0.3-pre';
+exports.version = '0.1.0-pre';
 
 // yoinked from node-oauth
 NONCE_CHARS= [
