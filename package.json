@@ -1,14 +1,17 @@
 {
   "name": "mouth",
-  "description": "skinny OAuth 1.0 wrapper",
-  "keywords": ["oauth", "authentication"],
   "version": "0.0.3-pre",
   "author": "Jean-Pierre Mouilleseaux <jpm@chordedconstructions.com>",
+  "description": "skinny OAuth 1.0 wrapper",
+  "main": "./mouth.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/pizthewiz/mouth"
   },
-  "main": "./mouth.js",
+  "keywords": [
+  	"oauth",
+  	"authentication"
+  ],
   "devDependencies": {
     "mocha": "*",
     "should": "*",
@@ -16,6 +19,8 @@
     "union": "*",
     "connect": "*"
   },
-  "engine": { "node": ">=0.8" },
-  "license": "MIT"
+  "license": "MIT",
+  "engine": {
+  	"node": ">=0.8"
+  }
 }
