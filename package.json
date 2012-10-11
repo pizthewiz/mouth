@@ -6,7 +6,7 @@
   "main": "./mouth.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pizthewiz/mouth"
+    "url": "https://github.com/pizthewiz/mouth.git"
   },
   "keywords": [
   	"oauth",
