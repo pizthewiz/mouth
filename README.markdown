@@ -10,7 +10,7 @@ var mouth = require('mouth');
 
 var consumerKey = 'KEY', consumerSecret = 'SECRET', userToken = 'TOKEN' userSecret = 'SECRET';
 var postParams { status: 'getting rather Mouthy' };
-mouth.authenticatedRequest('POST', 'https://api.twitter.com/1/statuses/update.json', null, postParams, null, consumerKey, consumerSecret, userToken, userSecret, null, function (err, data, res) {
+mouth.authenticatedRequest('POST', 'https://api.twitter.com/1.1/statuses/update.json', null, postParams, null, consumerKey, consumerSecret, userToken, userSecret, null, function (err, data, res) {
 	if (!err && res.statusCode == 200) {
 		console.log('successfully tweeted');
 	}

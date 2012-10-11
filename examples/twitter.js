@@ -18,7 +18,7 @@ if (!config.consumerKey || !config.consumerSecret || !config.userToken || !confi
 }
 
 // verify application and user credentials
-mouth.authenticatedRequest('GET', 'https://api.twitter.com/1/account/verify_credentials.json', null, null, null, config.consumerKey, config.consumerSecret, config.userToken, config.userSecret, null, function (err, data, res) {
+mouth.authenticatedRequest('GET', 'https://api.twitter.com/1.1/account/verify_credentials.json', null, null, null, config.consumerKey, config.consumerSecret, config.userToken, config.userSecret, null, function (err, data, res) {
 	if (err) {
 		console.log('ERROR - failed to verify credentials - ' + util.inspect(err));
     process.exit(code=1);
@@ -32,7 +32,7 @@ mouth.authenticatedRequest('GET', 'https://api.twitter.com/1/account/verify_cred
 var params = {
 	'status': 'giving Mouth a quick lashing'
 };
-mouth.authenticatedRequest('POST', 'https://api.twitter.com/1/statuses/update.json', null, params, null, config.consumerKey, config.consumerSecret, config.userToken, config.userSecret, null, function (err, data, res) {
+mouth.authenticatedRequest('POST', 'https://api.twitter.com/1.1/statuses/update.json', null, params, null, config.consumerKey, config.consumerSecret, config.userToken, config.userSecret, null, function (err, data, res) {
 	if (err) {
 		console.log('ERROR - failed to get xAuth access token - ' + util.inspect(err));
     process.exit(code=1);
