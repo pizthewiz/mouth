@@ -1,3 +1,4 @@
+/*jshint node:true, strict:false */
 
 /*
                      .==++==.     .=+=.
@@ -91,6 +92,7 @@ _escape = function (obj) {
  * @param {Object} extraOauthParams
  * @api public
  */
+var authorizationHeaderString;
 exports.authorizationHeaderString = authorizationHeaderString = function (method, url, queryParams, postParams, consumerKey, consumerSecret, userToken, userSecret, extraOauthParams) {
 	// TODO - validate arguments
 	//	method legit/uppercase
@@ -209,8 +211,8 @@ exports.authenticatedRequest = function (method, url, queryParams, postContent, 
 		} else {
 			contentLength = postContent.length;
 		}
-		options['headers']['Content-Type'] = contentType;
-		options['headers']['Content-Length'] = contentLength;
+		options.headers['Content-Type'] = contentType;
+		options.headers['Content-Length'] = contentLength;
 	}
 
 	// internal callback handler
