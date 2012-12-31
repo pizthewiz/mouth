@@ -1,6 +1,6 @@
 
-### v0.1.0 (XX YYY 2012)
-* ADD isolate Authorization header generation function
+### v0.1.0 (XX YYY 2013)
+* ADD expose function for Authorization header generation
 * FIX some characters in query and post params not properly escaped
 
 ### v0.0.2 (07 May 2012)
